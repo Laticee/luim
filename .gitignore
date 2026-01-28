@@ -1,0 +1,15 @@
+# Compiled binaries
+src/input/driver
+
+# Test files
+test.txt
+
+# OS-specific
+.DS_Store
+
+# Temporary files
+*.swp
+*.tmp
+
+# Lune/Vib specific (if any)
+luim_wrapper
