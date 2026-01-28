@@ -231,49 +231,73 @@ local function handleInput()
     end
 
     if mode == "NORMAL" then
+        if key == "esc" then
+            commandBuffer = ""
+            return true
+        end
+
         commandBuffer = commandBuffer .. key
         
+        local handled = false
         if commandBuffer == "i" then
             mode = "INSERT"
             commandBuffer = ""
+            handled = true
         elseif commandBuffer == "h" or commandBuffer == "left" then
             cursorCol = cursorCol - 1
             commandBuffer = ""
+            handled = true
         elseif commandBuffer == "l" or commandBuffer == "right" then
             cursorCol = cursorCol + 1
             commandBuffer = ""
+            handled = true
         elseif commandBuffer == "k" or commandBuffer == "up" then
             cursorRow = cursorRow - 1
             commandBuffer = ""
+            handled = true
         elseif commandBuffer == "j" or commandBuffer == "down" then
             cursorRow = cursorRow + 1
             commandBuffer = ""
+            handled = true
         elseif commandBuffer == "x" then
             buffer:deleteChar(cursorRow, cursorCol)
             commandBuffer = ""
+            handled = true
         elseif commandBuffer == "dd" then 
             buffer:deleteLine(cursorRow)
             commandBuffer = ""
+            handled = true
         elseif commandBuffer == "o" then
             buffer:insertLine(cursorRow + 1, "")
             cursorRow = cursorRow + 1
             cursorCol = 1
             mode = "INSERT"
             commandBuffer = ""
+            handled = true
         elseif commandBuffer == "O" then
             buffer:insertLine(cursorRow, "")
             cursorCol = 1
             mode = "INSERT"
             commandBuffer = ""
+            handled = true
         elseif commandBuffer == "0" then -- Jump to start
             cursorCol = 1
             commandBuffer = ""
+            handled = true
         elseif commandBuffer == "G" then -- Jump to end
             cursorRow = buffer:getLineCount()
             commandBuffer = ""
-        elseif #commandBuffer >= 2 then
-            -- Clear buffer if it doesn't match any command
-            commandBuffer = ""
+            handled = true
+        end
+
+        if not handled then
+            -- If it's a prefix of a longer command, keep it
+            if commandBuffer == "d" then
+                -- Wait for next char
+            else
+                -- Not a command, clear buffer
+                commandBuffer = ""
+            end
         end
         
     elseif mode == "INSERT" then
